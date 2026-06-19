@@ -1,0 +1,323 @@
+Name it  xauusd-pro  (or anything)<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="XAU Pro">
+<meta name="description" content="XAU/USD Pro Trader - Signals, Calculator & Journal">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>XAU/USD Pro</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{background:#0a0a0a;color:#f5f5f5;height:100%;overflow:hidden}
+#app{max-width:430px;margin:0 auto;height:100vh;overflow-y:auto;overflow-x:hidden;position:relative;padding:0 16px 80px}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
+h1{font-size:22px;background:linear-gradient(135deg,#ffd700,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:16px 0 12px;text-align:center}
+.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 14px;background:#141414;border:none;border-radius:12px;color:#888;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s}
+.tab.active{background:#ffd700;color:#000;font-weight:700}
+.sec{display:none;animation:fadeIn .3s ease}
+.sec.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{background:#141414;border-radius:20px;padding:18px;margin-bottom:12px}
+.card h3{color:#ffd700;font-size:15px;margin-bottom:12px;font-weight:700}
+.card p,.card li{color:#888;font-size:13px;line-height:1.7;margin-bottom:8px}
+.card ul{padding-left:18px}
+.btn{padding:14px 20px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:12px;transition:transform .15s,opacity .15s}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:#ffd700;color:#000}
+.btn-gold:hover{opacity:.9}
+.btn-red{background:#ef4444;color:#fff}
+.input-group{margin-bottom:14px}
+.input-group label{display:block;font-size:12px;color:#888;margin-bottom:6px;font-weight:500}
+.input-group input,.input-group select{width:100%;padding:14px;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:14px;color:#fff;font-size:15px;outline:none;transition:border-color .2s}
+.input-group input:focus,.input-group select:focus{border-color:#ffd700}
+.result-box{background:#1e1e1e;padding:18px;border-radius:16px;margin-top:14px;text-align:center}
+.result-box .value{font-size:32px;font-weight:800;color:#ffd700}
+.result-box .label{font-size:12px;color:#888;margin-top:4px}
+.signal-box{padding:24px 20px;border-radius:20px;text-align:center;margin:14px 0;border:2px solid;transition:all .3s}
+.signal-box.buy{background:rgba(34,197,94,.08);border-color:#22c55e}
+.signal-box.sell{background:rgba(239,68,68,.08);border-color:#ef4444}
+.signal-box.neutral{background:rgba(168,85,247,.08);border-color:#a855f7}
+.signal-box .signal-text{font-size:26px;font-weight:800;margin-bottom:10px}
+.signal-text.buy{color:#22c55e}
+.signal-text.sell{color:#ef4444}
+.signal-text.neutral{color:#a855f7}
+.signal-box .reason{color:#888;font-size:13px;line-height:1.8}
+.trade-row{display:flex;gap:10px;margin-bottom:12px}
+.trade-row .input-group{flex:1;margin-bottom:0}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(120px);background:#1e1e1e;color:#fff;padding:16px 28px;border-radius:16px;font-size:14px;font-weight:600;z-index:3000;opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:#141414;border-radius:16px;padding:18px 12px;text-align:center}
+.stat-card .value{font-size:26px;font-weight:800;color:#ffd700}
+.stat-card .label{font-size:11px;color:#888;margin-top:4px}
+.strategy-card{background:#1e1e1e;padding:16px;border-radius:16px;margin-bottom:10px;cursor:pointer;transition:transform .15s,background .2s}
+.strategy-card:active{transform:scale(.98);background:#252525}
+.strategy-card .name{font-weight:700;font-size:14px;color:#f5f5f5}
+.strategy-card .desc{font-size:12px;color:#888;margin-top:4px}
+.checklist-item{display:flex;align-items:center;gap:12px;padding:12px;background:#1e1e1e;border-radius:12px;margin-bottom:8px;cursor:pointer;transition:background .2s}
+.checklist-item:active{background:#252525}
+.checklist-item .check{width:22px;height:22px;border:2px solid #555;border-radius:6px;flex-shrink:0;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.checklist-item.checked .check{background:#22c55e;border-color:#22c55e}
+.checklist-item .check::after{content:"✓";color:#fff;font-size:14px;font-weight:700;opacity:0;transition:opacity .2s}
+.checklist-item.checked .check::after{opacity:1}
+.checklist-item .text{font-size:13px;color:#888;flex:1;transition:color .2s}
+.checklist-item.checked .text{color:#555;text-decoration:line-through}
+.recovery-box{background:#1e1e1e;padding:18px;border-radius:16px;margin:10px 0;border-left:4px solid #ef4444}
+.recovery-box .title{font-weight:700;color:#ef4444;font-size:14px;margin-bottom:10px}
+.trade-item{background:#1e1e1e;padding:14px;border-radius:14px;margin-bottom:10px;font-size:13px;color:#888;transition:background .2s}
+.trade-item:active{background:#252525}
+.trade-item .row{display:flex;justify-content:space-between;margin-bottom:6px;align-items:center}
+.trade-item .pl{font-weight:800;font-size:18px}
+.trade-item .pl.pos{color:#22c55e}
+.trade-item .pl.neg{color:#ef4444}
+.trade-item .del{color:#ef4444;cursor:pointer;font-size:12px;padding:6px 10px;border-radius:8px;background:rgba(239,68,68,.1);margin-top:8px;display:inline-block}
+.empty-state{text-align:center;padding:40px 20px;color:#555;font-size:14px}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+#install-btn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#ffd700;color:#000;padding:14px 32px;border-radius:30px;font-weight:700;font-size:14px;border:none;cursor:pointer;z-index:2000;box-shadow:0 4px 20px rgba(255,215,0,.3);display:none;animation:slideUp .4s ease}
+#install-btn.show{display:block}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(100px)}to{transform:translateX(-50%) translateY(0)}}
+.pwa-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.15);color:#22c55e;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="pwa-badge" id="pwa-badge" style="display:none">📲 App Ready</div>
+<h1>🥇 XAU/USD Pro</h1>
+<div class="tabs">
+<button class="tab active" data-t="signals">📡 Signals</button>
+<button class="tab" data-t="strategies">🎯 Strategies</button>
+<button class="tab" data-t="calc">🧮 Calc</button>
+<button class="tab" data-t="journal">📓 Journal</button>
+<button class="tab" data-t="recovery">🔄 Recovery</button>
+</div>
+
+<div class="sec active" id="signals">
+<div class="card">
+<h3>📡 Signal Generator</h3>
+<div class="input-group"><label>Current Price</label><input type="number" id="sig-price" placeholder="2350.00" step="0.01"></div>
+<div class="trade-row">
+<div class="input-group"><label>EMA 50</label><input type="number" id="sig-ema50" placeholder="EMA 50" step="0.01"></div>
+<div class="input-group"><label>EMA 200</label><input type="number" id="sig-ema200" placeholder="EMA 200" step="0.01"></div>
+</div>
+<div class="trade-row">
+<div class="input-group"><label>RSI</label><input type="number" id="sig-rsi" placeholder="0-100" min="0" max="100"></div>
+<div class="input-group"><label>MACD</label><select id="sig-macd"><option value="bullish">Bullish</option><option value="bearish">Bearish</option><option value="neutral">Neutral</option></select></div>
+</div>
+<div class="input-group"><label>Support</label><input type="number" id="sig-support" placeholder="Support" step="0.01"></div>
+<div class="input-group"><label>Resistance</label><input type="number" id="sig-resistance" placeholder="Resistance" step="0.01"></div>
+<div class="input-group"><label>Trend</label><select id="sig-trend"><option value="uptrend">Uptrend</option><option value="downtrend">Downtrend</option><option value="sideways">Sideways</option></select></div>
+<button class="btn btn-gold" onclick="generateSignal()">Generate Signal</button>
+<div id="signal-result"></div>
+</div>
+<div class="card">
+<h3>📋 Checklist</h3>
+<div class="checklist-item" onclick="toggleCheck(this)"><div class="check"></div><div class="text">Price above/below EMA 50/200</div></div>
+<div class="checklist-item" onclick="toggleCheck(this)"><div class="check"></div><div class="text">RSI not extreme (>70 or <30)</div></div>
+<div class="checklist-item" onclick="toggleCheck(this)"><div class="check"></div><div class="text">MACD confirms direction</div></div>
+<div class="checklist-item" onclick="toggleCheck(this)"><div class="check"></div><div class="text">Near support (buy) or resistance (sell)</div></div>
+<div class="checklist-item" onclick="toggleCheck(this)"><div class="check"></div><div class="text">No high-impact news soon</div></div>
+<div class="checklist-item" onclick="toggleCheck(this)"><div class="check"></div><div class="text">R:R at least 1:2</div></div>
+<div class="checklist-item" onclick="toggleCheck(this)"><div class="check"></div><div class="text">Risk 1-2% max</div></div>
+</div>
+</div>
+
+<div class="sec" id="strategies">
+<div class="card">
+<h3>🎯 Trend Following</h3>
+<div class="strategy-card" onclick="showStrategy('Golden Cross: EMA 50 crosses above EMA 200. Buy on pullback to EMA 50. Stop below swing low. Target 2x risk.')">
+<div class="name">📈 Golden Cross (BUY)</div>
+<div class="desc">EMA 50 > EMA 200. Buy pullbacks.</div>
+</div>
+<div class="strategy-card" onclick="showStrategy('Death Cross: EMA 50 crosses below EMA 200. Sell on pullback to EMA 50. Stop above swing high. Target 2x risk.')">
+<div class="name">📉 Death Cross (SELL)</div>
+<div class="desc">EMA 50 < EMA 200. Sell pullbacks.</div>
+</div>
+</div>
+<div class="card">
+<h3>💥 Breakout</h3>
+<div class="strategy-card" onclick="showStrategy('Wait for price to consolidate 3+ candles near resistance. Enter on strong close above. Stop below consolidation. Target measured move.')">
+<div class="name">🔨 Resistance Breakout</div>
+<div class="desc">Consolidation → Break → Retest entry</div>
+</div>
+<div class="strategy-card" onclick="showStrategy('Wait for consolidation near support. Enter on breakdown. Stop above consolidation. Target next support.')">
+<div class="name">🔨 Support Breakdown</div>
+<div class="desc">Consolidation → Breakdown → Entry</div>
+</div>
+</div>
+<div class="card">
+<h3>⚡ Scalping</h3>
+<div class="strategy-card" onclick="showStrategy('M5/M15: Price trending above EMA 21. Pullback touches EMA 21. Enter on first bullish candle. Stop 5-8 pips. Target 10-20 pips. Max 30 min.')">
+<div class="name">⚡ EMA Bounce Scalp</div>
+<div class="desc">Quick 5-15 pip trades on M5</div>
+</div>
+</div>
+<div class="card">
+<h3>🌊 Swing</h3>
+<div class="strategy-card" onclick="showStrategy('H4/D1: Identify impulse move. Draw Fib 38.2%-61.8%. Enter at reversal pattern. Stop below 61.8%. Target previous high or 1.618 extension.')">
+<div class="name">🌊 Fibonacci Retracement</div>
+<div class="desc">Enter at 38%-62% pullback in trend</div>
+</div>
+<div class="strategy-card" onclick="showStrategy('Bullish: Price lower low, RSI higher low. Bearish: Price higher high, RSI lower high. Entry on confirming candle. Stop beyond divergence point.')">
+<div class="name">🌊 Divergence</div>
+<div class="desc">Price and RSI move opposite</div>
+</div>
+</div>
+</div>
+
+<div class="sec" id="calc">
+<div class="card">
+<h3>🧮 Position Size</h3>
+<div class="input-group"><label>Balance ($)</label><input type="number" id="balance" value="10000"></div>
+<div class="input-group"><label>Risk (%)</label><input type="number" id="risk" value="1"></div>
+<div class="trade-row">
+<div class="input-group"><label>Entry</label><input type="number" id="entry" placeholder="2350" step="0.01"></div>
+<div class="input-group"><label>Stop</label><input type="number" id="stop" placeholder="2340" step="0.01"></div>
+</div>
+<div class="input-group"><label>Target</label><input type="number" id="tp" placeholder="2370" step="0.01"></div>
+<button class="btn btn-gold" onclick="calculatePosition()">Calculate</button>
+<div class="result-box" id="calc-result" style="display:none">
+<div class="value" id="lot-size">-</div><div class="label">Lots</div>
+<div style="display:flex;gap:10px;margin-top:14px">
+<div style="flex:1"><div class="value" style="font-size:18px" id="risk-amount">-</div><div class="label">Risk</div></div>
+<div style="flex:1"><div class="value" style="font-size:18px" id="reward-amount">-</div><div class="label">Reward</div></div>
+<div style="flex:1"><div class="value" style="font-size:18px" id="rr-ratio">-</div><div class="label">R:R</div></div>
+</div>
+</div>
+</div>
+<div class="card">
+<h3>💰 Recovery</h3>
+<div class="input-group"><label>Loss ($)</label><input type="number" id="current-loss" placeholder="5000"></div>
+<div class="input-group"><label>Balance ($)</label><input type="number" id="recovery-balance" placeholder="10000"></div>
+<div class="input-group"><label>Win Rate (%)</label><input type="number" id="recovery-winrate" value="50"></div>
+<div class="input-group"><label>Avg R:R</label><input type="number" id="recovery-rr" value="2" step="0.1"></div>
+<button class="btn btn-gold" onclick="calculateRecovery()">Calculate</button>
+<div id="recovery-calc-result"></div>
+</div>
+</div>
+
+<div class="sec" id="journal">
+<div class="stats-grid">
+<div class="stat-card"><div class="value" id="total-trades">0</div><div class="label">Trades</div></div>
+<div class="stat-card"><div class="value" id="win-rate">0%</div><div class="label">Win Rate</div></div>
+<div class="stat-card"><div class="value" id="total-pl">$0</div><div class="label">P&L</div></div>
+<div class="stat-card"><div class="value" id="avg-rr">0</div><div class="label">Avg R:R</div></div>
+</div>
+<div class="card">
+<h3>➕ New Trade</h3>
+<div class="trade-row">
+<div class="input-group"><label>Side</label><select id="trade-side"><option value="buy">Buy</option><option value="sell">Sell</option></select></div>
+<div class="input-group"><label>Date</label><input type="date" id="trade-date"></div>
+</div>
+<div class="trade-row">
+<div class="input-group"><label>Entry</label><input type="number" id="trade-entry" placeholder="2350" step="0.01"></div>
+<div class="input-group"><label>Exit</label><input type="number" id="trade-exit" placeholder="2360" step="0.01"></div>
+</div>
+<div class="trade-row">
+<div class="input-group"><label>Stop</label><input type="number" id="trade-sl" placeholder="2340" step="0.01"></div>
+<div class="input-group"><label>Target</label><input type="number" id="trade-tp" placeholder="2370" step="0.01"></div>
+</div>
+<div class="input-group"><label>Strategy</label><select id="trade-strategy"><option>Trend</option><option>Breakout</option><option>Scalp</option><option>Swing</option><option>News</option></select></div>
+<div class="input-group"><label>Emotion</label><select id="trade-emotion"><option>Calm</option><option>Confident</option><option>Hesitant</option><option>Revenge</option><option>Fear</option></select></div>
+<div class="input-group"><label>Notes</label><input type="text" id="trade-notes" placeholder="Lessons learned"></div>
+<button class="btn btn-gold" onclick="addTrade()">Add Trade</button>
+</div>
+<div class="card">
+<h3>📋 History</h3>
+<div id="trade-list"></div>
+</div>
+</div>
+
+<div class="sec" id="recovery">
+<div class="card">
+<h3>🔄 Recovery Plan</h3>
+<div class="recovery-box">
+<div class="title">⚠️ Stop the Bleeding</div>
+<p>• Reduce to 0.5% risk per trade<br>• Take 2-3 day break after big loss<br>• Never increase risk to "make it back"<br>• Review last 10 trades for patterns</p>
+</div>
+<div class="recovery-box">
+<div class="title">🎯 3-Step Recovery</div>
+<p><strong>Step 1:</strong> Demo trade 1 week<br><strong>Step 2:</strong> Micro lots (0.01) until consistent<br><strong>Step 3:</strong> Gradually increase size</p>
+</div>
+<div class="recovery-box">
+<div class="title">💪 Mental Reset</div>
+<p>• Accept loss as part of trading<br>• Focus on process, not money<br>• Set small daily goals<br>• Celebrate small wins</p>
+</div>
+</div>
+<div class="card">
+<h3>📈 Recovery Math</h3>
+<table style="width:100%;color:#888;font-size:13px;border-collapse:collapse">
+<tr style="border-bottom:1px solid #333"><th style="text-align:left;padding:10px 8px">Loss</th><th style="text-align:right;padding:10px 8px">Gain Needed</th></tr>
+<tr style="border-bottom:1px solid #222"><td style="padding:10px 8px">-10%</td><td style="text-align:right;padding:10px 8px;color:#22c55e;font-weight:700">+11.1%</td></tr>
+<tr style="border-bottom:1px solid #222"><td style="padding:10px 8px">-20%</td><td style="text-align:right;padding:10px 8px;color:#22c55e;font-weight:700">+25%</td></tr>
+<tr style="border-bottom:1px solid #222"><td style="padding:10px 8px">-30%</td><td style="text-align:right;padding:10px 8px;color:#22c55e;font-weight:700">+42.9%</td></tr>
+<tr style="border-bottom:1px solid #222"><td style="padding:10px 8px">-40%</td><td style="text-align:right;padding:10px 8px;color:#f59e0b;font-weight:700">+66.7%</td></tr>
+<tr style="border-bottom:1px solid #222"><td style="padding:10px 8px">-50%</td><td style="text-align:right;padding:10px 8px;color:#ef4444;font-weight:700">+100%</td></tr>
+<tr><td style="padding:10px 8px">-60%</td><td style="text-align:right;padding:10px 8px;color:#ef4444;font-weight:700">+150%</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>🧠 Psychology</h3>
+<p style="color:#888;font-size:13px;line-height:1.8"><strong style="color:#f5f5f5">5 Deadly Sins:</strong><br>1. Revenge Trading<br>2. FOMO<br>3. Overtrading<br>4. Moving Stops<br>5. Ignoring Plan</p>
+<p style="margin-top:14px;color:#888;font-size:13px;line-height:1.8"><strong style="color:#f5f5f5">Affirmations:</strong><br>• I follow my plan<br>• I accept losses<br>• I risk small to win big<br>• I wait for A+ setups</p>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<button id="install-btn" onclick="installPWA()">📲 Install App</button>
+
+<script>
+const K="xau_trader_v2";
+const D=JSON.parse(localStorage.getItem(K)||'{"trades":[]}');
+function save(){localStorage.setItem(K,JSON.stringify(D))}
+function toast(m){
+  const t=document.getElementById("toast");
+  t.textContent=m;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2500);
+}
+function showStrategy(msg){
+  toast(msg.substring(0,60)+"...");
+  setTimeout(()=>alert(msg),300);
+}
+
+/* --- PWA Install --- */
+let deferredPrompt;
+const installBtn=document.getElementById("install-btn");
+const pwaBadge=document.getElementById("pwa-badge");
+
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  installBtn.classList.add('show');
+  pwaBadge.style.display='inline-flex';
+});
+
+window.addEventListener('appinstalled',()=>{
+  installBtn.style.display='none';
+  pwaBadge.textContent='✅ App Installed';
+  deferredPrompt=null;
+});
+
+async function installPWA(){
+  if(!deferredPrompt){toast('App already installed or not supported');return;}
+  deferredPrompt.prompt();
+  const {outcome}=await deferredPrompt.userChoice;
+  if(outcome==='accepted'){toast('✅ Installing...');}
+  deferredPrompt=null;
+  installBtn.classList.remove('show');
+}
+
+/* --- Service Worker --- */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+/* --- Tab 
